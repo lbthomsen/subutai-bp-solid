@@ -1,0 +1,51 @@
+--- 
+
+- hosts: solid
+  remote_user: root
+  tasks: 
+
+    - name: Disable dpkg fsync
+      shell: test -e /etc/dpkg/dpkg.cfg.d/unsafe-io || echo force-unsafe-io > /etc/dpkg/dpkg.cfg.d/unsafe-io
+
+    - name: Install dirmngr
+      apt:
+        name: dirmngr
+        state: present
+
+    - name: Add node repo key
+      apt_key:
+        id: 1655A0AB68576280
+        keyserver: keys.gnupg.net
+
+    - name: Add node repo
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_10.x stretch main
+        state: present
+
+    - name: Upgrade
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Install required debs
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - nodejs
+        - sudo 
+        - git
+        - build-essential
+
+    - name: Create solid user
+      user:
+        name: solid
+        group: users
+        shell: /bin/bash
+        generate_ssh_key: yes
+
+    - name: Install solid server
+      npm:
+        name: solid-server
+        global: yes
+        

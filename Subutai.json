@@ -1,0 +1,46 @@
+{
+    "name": "${environmentName}",
+    "description": "Subutai Solid Blueprint",
+    "version": "0.0.1",
+    "author": "https://github.com/lbthomsen",
+    "ssh-key": "lth",
+    "containers": [
+        {
+            "hostname": "solid",
+            "template": "debian-stretch",
+            "peer-criteria": "SOLID-GROUP",
+            "size": "${containerSize}"
+        }
+    ],
+    "peer-criteria": [
+        {
+            "name": "SOLID-GROUP"
+        }
+    ],
+    "ansible-configuration": {
+        "source-url": "https://github.com/lbthomsen/subutai-bp-solid/archive/master.zip",
+        "ansible-playbook": "site.yml",
+        "groups": [
+            {
+                "name": "solid",
+                "hostnames": [
+                    "solid"
+                ]
+            }
+        ]
+    },
+    "user-variables": {
+        "environmentName": {
+            "description": "Enter the environment name",
+            "type": "string",
+            "default": "ipfs",
+            "validation": "[a-zA-Z0-9]+"
+        },
+        "containerSize": {
+            "description": "Container Size",
+            "type": "enum",
+            "default": "MEDIUM",
+            "validation": "SMALL,MEDIUM,LARGE,HUGE"
+        }
+    }
+}
